@@ -29,8 +29,8 @@ export default function RootLayout({
       <body
         className={clsx(
           "font-banxors antialiased",
-          "py-16 px-8 min-h-screen text-center",
-          "bg-[linear-gradient(rgba(0,0,0,0.2)),url(./assets/images/hearts_bg.jpg)] bg-cover bg-center"
+          "py-16 min-h-screen",
+          "bg-[linear-gradient(rgba(0,0,0,0.2),rgba(0,0,0,0.2)),url(./assets/images/hearts_bg.jpg)] bg-cover bg-center"
         )}
       >
         {children}

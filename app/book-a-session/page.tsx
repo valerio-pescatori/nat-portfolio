@@ -1,7 +1,7 @@
 "use client";
 import Form from "next/form";
 import { redirect } from "next/navigation";
-import { FormEventHandler, useEffect, useRef, useState } from "react";
+import { FormEventHandler, useState } from "react";
 
 export default function BookASession() {
   const [value, setValue] = useState("");
@@ -12,7 +12,7 @@ export default function BookASession() {
   };
 
   return (
-    <section className="flex flex-col text-3xl gap-4">
+    <section className="flex flex-col text-3xl gap-4 px-4">
       <h1 className="text-7xl">Book a session</h1>
       <span>
         Raccontami la tua idea qui sotto e premi il tasto invia: avvierai direttamente una conversazione con me tramite
