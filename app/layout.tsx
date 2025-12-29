@@ -26,15 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={clsx(banxors.variable, inter.variable)}>
-      <body
-        className={clsx(
-          "font-banxors antialiased",
-          "py-16 min-h-screen",
-          "bg-[linear-gradient(rgba(0,0,0,0.2),rgba(0,0,0,0.2)),url(./assets/images/hearts_bg.jpg)] bg-cover bg-center"
-        )}
-      >
-        {children}
-      </body>
+      <body className={clsx("font-banxors antialiased", "min-h-screen", "bg-primary")}>{children}</body>
     </html>
   );
 }
