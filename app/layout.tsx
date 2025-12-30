@@ -27,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={clsx(banxors.variable, inter.variable)}>
-      <body className={clsx("font-banxors antialiased", "min-h-screen", "bg-primary")}>{children}</body>
+      <body className={clsx("font-banxors antialiased", "min-h-screen", "bg-linear-to-b from-primary to-secondary")}>{children}</body>
     </html>
   );
 }

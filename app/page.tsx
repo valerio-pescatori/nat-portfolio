@@ -1,10 +1,10 @@
 "use client";
-import { extractTranslate } from "@/utils/extractTranslate ";
 import clsx from "clsx";
 import { LenisRef, ReactLenis, useLenis } from "lenis/react";
-import { useCallback, useEffect, useRef } from "react";
+import { useRef, useState } from "react";
 
 export default function Home() {
+  const [rotation, setRotation] = useState(0);
   const TOTAL_ELEMENTS = 8;
   const RADIUS_MULTIPLIER = 0.5;
 
@@ -16,98 +16,60 @@ export default function Home() {
     return viewportWidth * RADIUS_MULTIPLIER;
   };
 
-  const placeSquares = useCallback((delta = 0) => {
-    const r = getRadius();
-
-    blocks.current.forEach((block, i) => {
-      if (!block) return;
-      // angolo di origine
-      let angle = ((2 * Math.PI) / TOTAL_ELEMENTS) * i;
-      const currentTranslate = extractTranslate(block.style.transform);
-      // if res exists, extract the angle
-      if (currentTranslate) {
-        angle = Math.atan2(currentTranslate.y, currentTranslate.x);
-      }
-
-      // posizione del blocco tramite seno e coseno
-      const x = r * Math.cos(angle + delta);
-      const y = r * Math.sin(angle + delta);
-
-      if (i === 1) {
-        // console.log(`block: ${i}, x: ${x}, y: ${y}\ndelta: ${delta}`);
-      }
-      block.style.transform = `translate(${x}px, ${y}px)`;
-    });
-  }, []);
-
-  useEffect(() => {
-    // initial position
-    placeSquares();
-  }, [blocks, placeSquares]);
-
-  const lastAnimatedScroll = useRef<number>(0);
-  const lastDirection = useRef<number>(0);
+  const lastAnimatedScroll = useRef(0);
 
   useLenis(
-    (x) => {
-      if (!x.isScrolling) return;
-      // update position
-      const r = getRadius();
-      // animatedScroll mi da la distanza dall'inizio dell'azione di scroll.
-      // io posiziono ogni elemento sommando l'angolo attuale alla distanza dall'inizio dello scrol.
-      // devo invece prendere come delta solo la differenza tra l'animatedScrollAttuale e quello dell'esecuzione precedente.
-      let deltaAnimatedScroll = x.animatedScroll - lastAnimatedScroll.current;
-      if (
-        // se inizio una nuova scrollAction
-        (deltaAnimatedScroll < 0 && x.direction === 1) ||
-        (deltaAnimatedScroll > 0 && x.direction === -1)
-      ) {
-        // uso il valore pure come delta
-        deltaAnimatedScroll = x.animatedScroll;
+    (e) => {
+      if (!e.isScrolling) {
+        lastAnimatedScroll.current = 0;
+        return;
       }
-      // // se cambio direzione
-      // if (x.direction !== lastDirection.current){
-        
-      // }
-        console.log(`
-        lastAnimatedScroll: ${lastAnimatedScroll.current}
-        animatedScroll: ${x.animatedScroll}
-        deltaAnimatedScroll: ${deltaAnimatedScroll}
-        lastDirection: ${lastDirection.current}
-        direction: ${x.direction}
-        `);
-      const scrollTop = deltaAnimatedScroll * 0.00002;
-      lastDirection.current = x.direction;
-      lastAnimatedScroll.current = x.animatedScroll;
-      const deltaRad = scrollTop * r;
-      placeSquares(deltaRad);
+      // update rotation
+      const delta = e.animatedScroll - lastAnimatedScroll.current;
+      lastAnimatedScroll.current = e.animatedScroll;
+      setRotation((r) => r + delta * 0.5);
     },
     [blocks]
   );
 
   return (
-    <ReactLenis
-      root="asChild"
-      className="text-3xl w-full relative h-screen overflow-auto"
-      ref={lenisRef}
-      options={{ infinite: true, syncTouch: true }}
-    >
-      <div id="wrapper" className="pointer-events-none fixed inset-0 top-1/2 -translate-y-1/2">
-        {Array.from({ length: TOTAL_ELEMENTS }).map((_, i) => (
-          <div
-            className={clsx(
-              "w-32 bg-white aspect-square border-2 rounded-lg flex items-center justify-center",
-              "absolute"
-            )}
-            key={i}
-            ref={(element) => {
-              blocks.current[i] = element;
-            }}
-          >
-            {i}
-          </div>
-        ))}
-      </div>
-    </ReactLenis>
+    <>
+      <ReactLenis
+        root="asChild"
+        className="text-3xl w-full relative h-screen overflow-auto"
+        ref={lenisRef}
+        options={{ infinite: true, syncTouch: true }}
+      >
+        <div
+          id="wrapper"
+          className="pointer-events-none absolute inset-0 top-1/2 -translate-1/2"
+          style={{ rotate: `${rotation}deg` }}
+        >
+          {Array.from({ length: TOTAL_ELEMENTS }).map((_, i) => {
+            const r = getRadius();
+            const angle = (360 / TOTAL_ELEMENTS) * i;
+            const radian = (angle * Math.PI) / 180;
+            const x = Math.cos(radian) * r;
+            const y = Math.sin(radian) * r;
+
+            return (
+              <div
+                className={clsx(
+                  "w-32 bg-white aspect-square border-2 rounded-lg flex items-center justify-center",
+                  "absolute top-1/2 left-1/2"
+                )}
+                style={{ rotate: `${-rotation}deg`, translate: `calc(-50% - ${x}px) calc(-50% - ${y}px)` }}
+                key={i}
+                ref={(element) => {
+                  blocks.current[i] = element;
+                }}
+              >
+                {i}
+              </div>
+            );
+          })}
+        </div>
+      </ReactLenis>
+    </>
   );
 }
