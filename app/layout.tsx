@@ -26,8 +26,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={clsx(banxors.variable, inter.variable)}>
-      <body className={clsx("font-banxors antialiased", "min-h-screen", "bg-linear-to-b from-primary to-secondary")}>{children}</body>
+    <html lang="en" className={clsx(banxors.variable, inter.variable, "overflow-x-hidden")}>
+      <body
+        className={clsx(
+          "font-banxors antialiased",
+          "min-h-screen overflow-x-hidden",
+          "bg-linear-to-b from-primary to-secondary"
+        )}
+      >
+        {children}
+      </body>
     </html>
   );
 }
