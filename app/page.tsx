@@ -46,11 +46,12 @@ export default function Home() {
 
         const normalizedDistanceX = Math.min(distanceX / maxDistance, 1);
         const normalizedDistanceY = Math.min(distanceY / maxDistance, 1);
-        // Transform the normalizedDistance into positive X and negative Y rotation with a maximum amount of 30deg
+        // Transform the normalizedDistance into positive X and negative Y rotation
         const rotationX = normalizedDistanceX * 45;
         const rotationY = -normalizedDistanceY * 45;
+        const rotationZ = normalizedDistanceY * 15;
 
-        block.style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg)`;
+        block.style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg) rotateZ(${-rotation + rotationZ}deg)`;
       });
     };
 
@@ -81,6 +82,7 @@ export default function Home() {
     <>
       <ReactLenis
         root="asChild"
+        autoRaf
         className="text-3xl w-full relative h-screen"
         ref={lenisRef}
         onTouchStart={() => (lastAnimatedScroll.current = 0)}
@@ -111,10 +113,13 @@ export default function Home() {
             return (
               <div
                 className={clsx(
-                  "w-3/4 bg-white aspect-square shadow-2xl border overflow-hidden rounded-lg flex items-center justify-center",
+                  "bg-white aspect-square shadow-2xl border overflow-hidden rounded-lg flex items-center justify-center",
                   "absolute top-1/2 left-1/2"
                 )}
-                style={{ rotate: `${-rotation}deg`, translate: `calc(-50% - ${x}px) calc(-50% - ${y}px)` }}
+                style={{
+                  translate: `calc(-50% - ${x}px) calc(-50% - ${y}px)`,
+                  width: "min(75%, 450px)",
+                }}
                 key={i}
                 ref={(element) => {
                   blocks.current[i] = element;
