@@ -15,9 +15,37 @@
   --color-secondary: var(--secondary);
   --color-detail: var(--detail);
   --font-banxors: var(--font-banxors);
-  --font-inter: var(--font-inter);
+  --font-readable: var(--font-readable);
+
+  --ease-cool-bezier: cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-rise: rise 1.75s var(--ease-cool-bezier) forwards;
+  --animate-fade-in: fade-in 1.5s ease-in forwards;
+}
+
+@utility animation-delay-* {
+  animation-delay: --value(integer)ms;
 }
 
 body {
   color: var(--foreground);
+}
+
+@keyframes rise {
+  from {
+    transform: translateY(100%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }

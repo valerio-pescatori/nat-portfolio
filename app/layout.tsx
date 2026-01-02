@@ -1,17 +1,18 @@
 import clsx from "clsx";
+import "lenis/dist/lenis.css";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { UnifrakturMaguntia } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
-import "lenis/dist/lenis.css";
 
 const banxors = localFont({
   variable: "--font-banxors",
   src: "./assets/fonts/Banxors.otf",
 });
 
-const inter = Inter({
-  variable: "--font-inter",
+const readable = UnifrakturMaguntia({
+  variable: "--font-readable",
+  weight: "400",
   subsets: ["latin"],
 });
 
@@ -26,11 +27,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={clsx(banxors.variable, inter.variable, "overflow-x-hidden")}>
+    <html lang="en" className={clsx(banxors.variable, readable.variable, "overflow-hidden")}>
       <body
         className={clsx(
           "font-banxors antialiased",
-          "min-h-screen overflow-x-hidden",
+          "min-h-screen overflow-hidden",
           "bg-linear-to-b from-primary to-secondary"
         )}
       >
