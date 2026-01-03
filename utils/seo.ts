@@ -5,7 +5,7 @@ export const SUPPORTED_LOCALES: Locale[] = ["it", "en"];
 
 export function getSiteUrl(): URL {
   const raw = process.env.NEXT_PUBLIC_SITE_URL;
-  if (!raw) return new URL("http://localhost:3000");
+  if (!raw) return new URL("https://www.nat-tatss.ink");
   return new URL(raw);
 }
 
@@ -37,26 +37,26 @@ export function getPageSeo(locale: Locale, page: "home" | "portfolio" | "book"):
 
   if (page === "home") {
     return {
-      title: isIt ? "Nat Tatss" : "Nat Tatss",
+      title: isIt ? "Nat Tatss | Tattoo a Roma" : "Nat Tatss | Tattoo Artist in Rome",
       description: isIt
-        ? "Portfolio tatuaggi di Nat. Scopri lo stile, guarda i lavori e prenota una sessione."
-        : "Nat tattoo portfolio. Explore work and book a session.",
+        ? "Nat Tatss: tattoo a Roma. Guarda il portfolio e prenota una sessione."
+        : "Nat Tatss: tattoo artist in Rome. Explore the portfolio and book a session.",
     };
   }
 
   if (page === "portfolio") {
     return {
-      title: isIt ? "Portfolio | Nat Tatss" : "Portfolio | Nat Tatss",
+      title: isIt ? "Portfolio | Nat Tatss (Tattoo Roma)" : "Portfolio | Nat Tatss (Tattoo Rome)",
       description: isIt
-        ? "Portfolio tatuaggi di Nat: una selezione di lavori e stili."
-        : "Nat tattoo portfolio: a selection of work and styles.",
+        ? "Portfolio tatuaggi di Nat Tatss a Roma: una selezione di lavori e stili."
+        : "Nat Tatss tattoo portfolio in Rome: a selection of work and styles.",
     };
   }
 
   return {
-    title: isIt ? "Prenota una sessione | Nat Tatss" : "Book a session | Nat Tatss",
+    title: isIt ? "Prenota una sessione | Nat Tatss (Roma)" : "Book a session | Nat Tatss (Rome)",
     description: isIt
-      ? "Prenota una sessione con Nat Tatss e invia la tua idea su WhatsApp."
-      : "Book a session with Nat Tatss and send your idea on WhatsApp.",
+      ? "Prenota una sessione tattoo a Roma con Nat Tatss e invia la tua idea su WhatsApp."
+      : "Book a tattoo session in Rome with Nat Tatss and send your idea on WhatsApp.",
   };
 }

@@ -14,7 +14,7 @@ import { CircleX } from "lucide-react";
 import clsx from "clsx";
 import gsap from "gsap";
 
-const IMAGES = [anchor, knife, leo, octopus, shark, statue, tempus] as const;
+const IMAGES = [anchor, knife, leo, octopus, shark, statue, tempus];
 
 function getPortfolioAlt(index: number) {
   return `Nat tattoo portfolio image ${index + 1}`;

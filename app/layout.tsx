@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     default: "Nat Tatss",
     template: "%s",
   },
-  description: "Nat tattoo portfolio. Explore work and book a session.",
+  description: "Nat Tatss tattoo portfolio in Rome. Explore work and book a session.",
 };
 
 export default async function RootLayout({
