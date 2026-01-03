@@ -5,7 +5,7 @@ import { setLocaleCookie, useLocale } from "@/utils/locale";
 import { gsap } from "gsap";
 import { Menu, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import AnimatedLink from "./AnimatedLink";
 
 export default function Header() {
@@ -13,10 +13,15 @@ export default function Header() {
   const { t, locale, pathname } = useLocale();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const openRef = useRef(false);
   const overlayRef = useRef<HTMLDivElement | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const navRef = useRef<HTMLElement | null>(null);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
+
+  useEffect(() => {
+    openRef.current = open;
+  }, [open]);
 
   // Set cookie when locale changes
   useEffect(() => {
@@ -33,19 +38,20 @@ export default function Header() {
     return `/${targetLocale}${cleanPath}`;
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const overlay = overlayRef.current;
     const menu = menuRef.current;
     if (!overlay || !menu) return;
 
-    // Clear any leftover inline styles from previous animations
-    try {
-      const prevItems = menu.querySelectorAll(".animated-link-item");
-      if (prevItems.length) {
-        gsap.set(prevItems, { clearProps: "y,autoAlpha" });
-      }
-    } catch {
-      // ignore
+    const items = menu.querySelectorAll(".animated-link-item");
+
+    // Normalize base (closed) state before creating the new timeline.
+    // This avoids stale inline styles after locale/layout remounts.
+    gsap.set(overlay, { autoAlpha: 0 });
+    overlay.style.pointerEvents = "none";
+    gsap.set(menu, { x: "100%" });
+    if (items.length) {
+      gsap.set(items, { autoAlpha: 0, y: 18 });
     }
 
     const tl = gsap.timeline({ paused: true });
@@ -66,23 +72,34 @@ export default function Header() {
     tl.fromTo(menu, { x: "100%" }, { x: "0%", duration: 0.5, ease: "power3.out" }, 0);
 
     // Target the stable class for animated links so remounts don't break selection
-    const items = menu.querySelectorAll(".animated-link-item");
-    tl.from(items, { y: 18, autoAlpha: 0, stagger: 0.08, duration: 0.36, ease: "power2.out" }, 0.12);
+    tl.to(
+      items,
+      {
+        y: 0,
+        autoAlpha: 1,
+        stagger: 0.08,
+        duration: 0.36,
+        ease: "power2.out",
+      },
+      0.12
+    );
 
     tl.eventCallback("onReverseComplete", () => {
       overlay.style.pointerEvents = "none";
+      if (items.length) {
+        gsap.set(items, { autoAlpha: 0, y: 18 });
+      }
     });
 
     tlRef.current = tl;
 
+    // If the menu is currently open (e.g. locale switch while open), keep the UI consistent.
+    tl.progress(openRef.current ? 1 : 0).pause();
+
     return () => {
       tl.kill();
-      try {
-        const cleared = menu.querySelectorAll(".animated-link-item");
-        if (cleared.length) gsap.set(cleared, { clearProps: "y,autoAlpha" });
-      } catch {
-        // ignore
-      }
+      const cleared = menu.querySelectorAll(".animated-link-item");
+      if (cleared.length) gsap.set(cleared, { clearProps: "opacity,visibility,transform" });
     };
   }, [locale]);
 
@@ -110,7 +127,7 @@ export default function Header() {
       tl.reverse();
       document.body.style.overflow = "";
     }
-  }, [open]);
+  }, [open, locale]);
 
   return (
     <nav ref={navRef} className={`fixed w-full top-0 left-0 z-20 p-4 font-readable transition-colors duration-200 ${scrolled ? "bg-primary" : ""}`}>
@@ -155,7 +172,6 @@ export default function Header() {
         ref={overlayRef}
         onClick={() => setOpen(false)}
         className="fixed inset-0 bg-black/60 opacity-0 pointer-events-none"
-        style={{ visibility: "hidden" }}
       />
 
       <aside
