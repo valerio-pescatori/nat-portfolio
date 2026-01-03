@@ -3,7 +3,7 @@ import { useMounted } from "@/utils/hooks/useMounted";
 import clsx from "clsx";
 import { ReactLenis, useLenis } from "lenis/react";
 import Image, { StaticImageData } from "next/image";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 export type CarouselProps = {
   images: StaticImageData[];
@@ -12,6 +12,9 @@ export type CarouselProps = {
 
 export default function Carousel({ images, onClick }: CarouselProps) {
   const [rotation, setRotation] = useState(0);
+  const [windowWidth, setWindowWidth] = useState<number | null>(
+    typeof window !== "undefined" ? window.innerWidth : null
+  );
   const isMounted = useMounted();
   const totalElements = images.length;
 
@@ -19,12 +22,20 @@ export default function Carousel({ images, onClick }: CarouselProps) {
   const lastAnimatedScroll = useRef(0);
 
   const radius = useMemo(() => {
-    if (typeof window === "undefined") return 0;
-    const cardSize = window.innerWidth * 0.8;
-    const spacing = 1.4; // TODO: capire se lo spacing può essere reso dinamico
+    if (typeof window === "undefined" || windowWidth === null) return 0;
+    const cardSize = windowWidth * 0.8;
+
+    // Dynamic spacing based on viewport width
+    let spacing = 1.4; // Default for small screens (up to 650px)
+    if (windowWidth > 650 && windowWidth <= 1024) {
+      spacing = 1.2; // Medium screens
+    } else if (windowWidth > 1024) {
+      spacing = 1; // Large screens
+    }
+
     const radius = (cardSize * spacing * totalElements) / (2 * Math.PI);
     return radius;
-  }, [totalElements]);
+  }, [totalElements, windowWidth]);
 
   const updateVisibility = useCallback(() => {
     const viewportWidth = window.innerWidth;
@@ -57,13 +68,27 @@ export default function Carousel({ images, onClick }: CarouselProps) {
     });
   }, [rotation]);
 
+  // Set initial window width and listen for resize using useLayoutEffect
+  useLayoutEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   // Calculate visibility based on viewport position
   useEffect(() => {
     updateVisibility();
 
+    const handleResizeVisibility = () => {
+      updateVisibility();
+    };
+
     // Update on window resize
-    window.addEventListener("resize", updateVisibility);
-    return () => window.removeEventListener("resize", updateVisibility);
+    window.addEventListener("resize", handleResizeVisibility);
+    return () => window.removeEventListener("resize", handleResizeVisibility);
   }, [updateVisibility]);
 
   useLenis(
@@ -129,7 +154,7 @@ export default function Carousel({ images, onClick }: CarouselProps) {
                 )}
                 style={{
                   translate: `calc(-50% - ${x}px) calc(-50% - ${y}px)`,
-                  width: "min(80%, 450px)",
+                  width: "min(80%, 550px)",
                 }}
                 key={i}
                 ref={(element) => {

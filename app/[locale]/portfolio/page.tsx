@@ -1,13 +1,13 @@
 "use client";
 import Image, { StaticImageData } from "next/image";
-import anchor from "../assets/images/tattoos/anchor.jpg";
-import knife from "../assets/images/tattoos/knife.jpg";
-import leo from "../assets/images/tattoos/leo.jpg";
-import octopus from "../assets/images/tattoos/octopus.jpg";
-import shark from "../assets/images/tattoos/shark.jpg";
-import statue from "../assets/images/tattoos/statue.jpg";
-import tempus from "../assets/images/tattoos/tempus.jpg";
-import Carousel from "../components/Carousel";
+import anchor from "../../assets/images/tattoos/anchor.jpg";
+import knife from "../../assets/images/tattoos/knife.jpg";
+import leo from "../../assets/images/tattoos/leo.jpg";
+import octopus from "../../assets/images/tattoos/octopus.jpg";
+import shark from "../../assets/images/tattoos/shark.jpg";
+import statue from "../../assets/images/tattoos/statue.jpg";
+import tempus from "../../assets/images/tattoos/tempus.jpg";
+import Carousel from "../../components/Carousel";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { CircleX } from "lucide-react";
 import clsx from "clsx";
@@ -95,13 +95,34 @@ export default function Portfolio() {
 
   return (
     <section id="portfolio">
-      <Carousel
-        images={[anchor, knife, leo, octopus, shark, statue, tempus]}
-        onClick={(image) => {
-          setSelectedImage(image);
-          setIsOpenState("open");
-        }}
-      />
+      <div className="lg:hidden">
+        <Carousel
+          images={[anchor, knife, leo, octopus, shark, statue, tempus]}
+          onClick={(image) => {
+            setSelectedImage(image);
+            setIsOpenState("open");
+          }}
+        />
+      </div>
+      <div className="hidden lg:grid grid-cols-2 gap-4 py-6 px-4 mt-12">
+        {[anchor, knife, leo, octopus, shark, statue, tempus].map((image, index) => (
+          <div
+            key={index}
+            className="cursor-pointer overflow-hidden rounded-lg animate-rise-and-fade"
+            style={{ animationDelay: `${250 * index}ms`, animationFillMode: "backwards" }}
+            onClick={() => {
+              setSelectedImage(image);
+              setIsOpenState("open");
+            }}
+          >
+            <Image
+              src={image}
+              alt={`tattoo-${index}`}
+              className="size-full shadow-lg object-cover hover:scale-105 transition-transform duration-300 ease-out"
+            />
+          </div>
+        ))}
+      </div>
 
       {/* Image modal */}
       <div
@@ -119,10 +140,10 @@ export default function Portfolio() {
         >
           <path ref={pathRef} vectorEffect="non-scaling-stroke" d="M 0 0 V 0 Q 50 0 100 0 V 0 Z" />
         </svg>
-        <div className="z-10">
+        <div className="z-20">
           {/* cross */}
           <button
-            className="absolute right-6 bottom-6 text-white"
+            className="absolute right-6 bottom-6 z-30 text-white"
             onClick={() => {
               setIsOpenState("closed");
             }}

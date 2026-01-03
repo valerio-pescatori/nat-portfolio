@@ -1,42 +1,5 @@
-import Image from "next/image";
-import propic from "./assets/images/propic2.jpg";
+import { redirect } from 'next/navigation';
 
-import AnimatedLink from "./components/AnimatedLink";
-import AnimatedText from "./components/AnimatedText";
-
-export default function Home() {
-  return (
-    <>
-      <main className="h-screen relative flex flex-col">
-        {/* Gradient */}
-        <div className="pointer-events-none absolute inset-0 z-10 bg-linear-to-b from-primary/0 via-primary via-40% to-secondary" />
-        {/* Content */}
-        <Image src={propic} alt="propic" className="aspect-square w-full animate-fade-in" />
-        <div className="z-10 text-center absolute top-1/2 left-1/2 -translate-1/2">
-          <AnimatedText>
-            <h1 className="text-[15rem] leading-60">Nat</h1>
-          </AnimatedText>
-          <div className="font-readable flex flex-col gap-2">
-            <AnimatedText className="animation-delay-1500">
-              <h2 className="text-2xl ">tattoo artist</h2>
-            </AnimatedText>
-            <AnimatedLink
-              href="/portfolio"
-              className="text-lg transition-opacity animate-fade-in animation-delay-2000"
-              style={{ animationFillMode: "backwards" }}
-            >
-              Portfolio
-            </AnimatedLink>
-            <AnimatedLink
-              href="/book-a-session"
-              className="text-lg transition-opacity animate-fade-in animation-delay-2500"
-              style={{ animationFillMode: "backwards" }}
-            >
-              Book a session
-            </AnimatedLink>
-          </div>
-        </div>
-      </main>
-    </>
-  );
+export default function RootPage() {
+  redirect('/it');
 }

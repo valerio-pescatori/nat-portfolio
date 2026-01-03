@@ -20,6 +20,7 @@
   --ease-cool-bezier: cubic-bezier(0.16, 1, 0.3, 1);
   --animate-rise: rise 1.75s var(--ease-cool-bezier) forwards;
   --animate-fade-in: fade-in 1.5s ease-in forwards;
+  --animate-rise-and-fade: var(--animate-rise), var(--animate-fade-in);
 }
 
 @utility animation-delay-* {

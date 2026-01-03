@@ -1,15 +1,17 @@
-"use client";
+'use client';
 
-import { useLayoutEffect, useRef, useState } from "react";
-import gsap from "gsap";
-import { Send } from "lucide-react";
-import clsx from "clsx";
-import { Pirata_One } from "next/font/google";
+import { useLayoutEffect, useRef, useState } from 'react';
+import gsap from 'gsap';
+import { Send } from 'lucide-react';
+import clsx from 'clsx';
+import { Pirata_One } from 'next/font/google';
+import { useLocale } from '@/utils/locale';
 
-const pirata = Pirata_One({ subsets: ["latin"], display: "swap", weight: "400" });
+const pirata = Pirata_One({ subsets: ['latin'], display: 'swap', weight: '400' });
 
 export default function BookASession() {
-  const [value, setValue] = useState("");
+  const { t } = useLocale();
+  const [value, setValue] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
@@ -22,7 +24,7 @@ export default function BookASession() {
     gsap.set([titleRef.current, descriptionRef.current, formRef.current], {
       opacity: 0,
       y: 0,
-      clearProps: "all",
+      clearProps: 'all',
     });
 
     const tl = gsap.timeline();
@@ -32,7 +34,7 @@ export default function BookASession() {
       opacity: 0,
       y: 30,
       duration: 0.8,
-      ease: "power3.out",
+      ease: 'power3.out',
     });
 
     // Animate description
@@ -42,9 +44,9 @@ export default function BookASession() {
         opacity: 0,
         y: 20,
         duration: 0.6,
-        ease: "power3.out",
+        ease: 'power3.out',
       },
-      "-=0.4"
+      '-=0.4'
     );
 
     // Animate form
@@ -54,9 +56,9 @@ export default function BookASession() {
         opacity: 0,
         y: 20,
         duration: 0.6,
-        ease: "power3.out",
+        ease: 'power3.out',
       },
-      "-=0.4"
+      '-=0.4'
     );
 
     return () => {
@@ -68,7 +70,7 @@ export default function BookASession() {
     gsap.to(buttonRef.current, {
       y: entering ? -4 : 0,
       duration: 0.3,
-      ease: "power2.out",
+      ease: 'power2.out',
     });
   };
 
@@ -81,13 +83,13 @@ export default function BookASession() {
     gsap.to(buttonRef.current, {
       scale: 0.95,
       duration: 0.1,
-      ease: "power2.in",
+      ease: 'power2.in',
     });
 
     gsap.to(buttonRef.current, {
       scale: 1,
       duration: 0.2,
-      ease: "power2.out",
+      ease: 'power2.out',
       delay: 0.1,
     });
 
@@ -101,19 +103,16 @@ export default function BookASession() {
   };
 
   return (
-    <div
-      ref={containerRef}
-      className={`${pirata.className} min-h-screen flex items-center justify-center px-4 py-20`}
-    >
+    <div ref={containerRef} className={`${pirata.className} min-h-screen flex items-center justify-center px-4 py-20`}>
       <div className="w-full max-w-2xl">
         {/* Title */}
         <h1 ref={titleRef} className={`text-5xl md:text-7xl font-semibold text-center mb-8`}>
-          Book a session
+          {t('book_a_session')}
         </h1>
 
         {/* Description */}
         <p ref={descriptionRef} className="text-lg md:text-xl text-center mb-12 text-foreground/80">
-          Tell me about your idea below and hit send — you&apos;ll start a WhatsApp chat with me directly.
+          {t('book_description')}
         </p>
 
         {/* Form */}
@@ -124,19 +123,19 @@ export default function BookASession() {
               value={value}
               onChange={(e) => setValue(e.target.value)}
               name="text"
-              placeholder="Describe your tattoo idea..."
+              placeholder={t('placeholder_tattoo_idea')}
               className={clsx(
-                "w-full p-4 rounded-lg border-2 border-detail bg-primary/10",
-                "font-inter text-base placeholder-foreground/40",
-                "focus:outline-none focus:border-foreground focus:ring-2 focus:ring-primary/30",
-                "transition-all duration-300 resize-none",
-                "min-h-40"
+                'w-full p-4 rounded-lg border-2 border-detail bg-primary/10',
+                'font-inter text-base placeholder-foreground/40',
+                'focus:outline-none focus:border-foreground focus:ring-2 focus:ring-primary/30',
+                'transition-all duration-300 resize-none',
+                'min-h-40'
               )}
             />
             <div
               className={clsx(
-                "absolute bottom-3 right-3 text-sm text-foreground/50",
-                value.length > 0 && "text-primary"
+                'absolute bottom-3 right-3 text-sm text-foreground/50',
+                value.length > 0 && 'text-primary'
               )}
             >
               {value.length} / 500
@@ -151,16 +150,16 @@ export default function BookASession() {
             onMouseEnter={() => handleButtonHover(true)}
             onMouseLeave={() => handleButtonHover(false)}
             className={clsx(
-              "py-4 px-8 rounded-full font-semibold text-lg",
-              "bg-primary border-2 border-detail shadow-lg",
-              "flex items-center justify-center gap-2",
-              "transition-all duration-300",
-              "disabled:opacity-50 disabled:cursor-not-allowed",
-              "hover:shadow-xl active:scale-95",
-              value.trim() && !submitted && "cursor-pointer"
+              'py-4 px-8 rounded-full font-semibold text-lg',
+              'bg-primary border-2 border-detail shadow-lg',
+              'flex items-center justify-center gap-2',
+              'transition-all duration-300',
+              'disabled:opacity-50 disabled:cursor-not-allowed',
+              'hover:shadow-xl active:scale-95',
+              value.trim() && !submitted && 'cursor-pointer'
             )}
           >
-            <span>{submitted ? "Sending..." : "Send message"}</span>
+            <span>{submitted ? t('sending') : t('send_message')}</span>
             <Send size={20} />
           </button>
         </form>
@@ -168,7 +167,7 @@ export default function BookASession() {
         {/* Success message */}
         {submitted && (
           <p className={`mt-8 text-center text-primary font-semibold text-lg animate-fade-in`}>
-            ✓ Redirecting to WhatsApp...
+            {t('redirecting')}
           </p>
         )}
       </div>

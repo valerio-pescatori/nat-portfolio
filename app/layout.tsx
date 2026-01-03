@@ -3,7 +3,6 @@ import "lenis/dist/lenis.css";
 import type { Metadata } from "next";
 import { UnifrakturMaguntia } from "next/font/google";
 import localFont from "next/font/local";
-import Header from "./components/Header";
 import "./globals.css";
 
 const banxors = localFont({
@@ -28,7 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={clsx(banxors.variable, readable.variable, "overflow-hidden")}>
+    <html lang="en" className={clsx(banxors.variable, readable.variable, "overflow-hidden lg:overflow-auto")}>
       <body
         className={clsx(
           "font-banxors antialiased",
@@ -36,7 +35,6 @@ export default function RootLayout({
           "bg-linear-to-b from-primary to-secondary"
         )}
       >
-        <Header />
         {children}
       </body>
     </html>
