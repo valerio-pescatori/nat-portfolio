@@ -137,8 +137,7 @@ export default function Carousel({ images, onClick }: CarouselProps) {
                 }}
                 onClick={() => onClick?.(src)}
               >
-                {/* style={{ filter: "grayscale(100%)" }} */}
-                <Image src={src} alt={`image-${i}`} className="w-full h-full object-cover" />
+                <Image src={src} alt={`image-${i}`} className="w-full h-full object-cover bg-transparent" />
               </button>
             );
           })}

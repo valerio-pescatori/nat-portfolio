@@ -3,6 +3,7 @@ import "lenis/dist/lenis.css";
 import type { Metadata } from "next";
 import { UnifrakturMaguntia } from "next/font/google";
 import localFont from "next/font/local";
+import Header from "./components/Header";
 import "./globals.css";
 
 const banxors = localFont({
@@ -35,6 +36,7 @@ export default function RootLayout({
           "bg-linear-to-b from-primary to-secondary"
         )}
       >
+        <Header />
         {children}
       </body>
     </html>
