@@ -6,7 +6,15 @@ export const SUPPORTED_LOCALES: Locale[] = ["it", "en"];
 export function getSiteUrl(): URL {
   const raw = process.env.NEXT_PUBLIC_SITE_URL;
   if (!raw) return new URL("https://www.nat-tatss.ink");
-  return new URL(raw);
+
+  // Vercel env vars are often set as bare domains (e.g. "www.example.com").
+  // URL() requires an absolute URL with scheme.
+  try {
+    return new URL(raw);
+  } catch {
+    const sanitized = raw.replace(/^https?:\/\//i, "").replace(/\/+$/, "");
+    return new URL(`https://${sanitized}`);
+  }
 }
 
 export function toLocalePath(locale: Locale, pathname: string): string {
