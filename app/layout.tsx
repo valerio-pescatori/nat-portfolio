@@ -1,9 +1,11 @@
 import clsx from "clsx";
 import "lenis/dist/lenis.css";
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { UnifrakturMaguntia } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
+import { getSiteUrl } from "@/utils/seo";
 
 const banxors = localFont({
   variable: "--font-banxors",
@@ -17,17 +19,25 @@ const readable = UnifrakturMaguntia({
 });
 
 export const metadata: Metadata = {
-  title: "Nat tattoo",
-  description: "Nat's personal portfolio",
+  metadataBase: getSiteUrl(),
+  title: {
+    default: "Nat Tatss",
+    template: "%s",
+  },
+  description: "Nat tattoo portfolio. Explore work and book a session.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const cookieLocale = cookieStore.get("NEXT_LOCALE")?.value;
+  const lang = cookieLocale === "en" ? "en" : "it";
+
   return (
-    <html lang="en" className={clsx(banxors.variable, readable.variable, "overflow-hidden lg:overflow-auto")}>
+    <html lang={lang} className={clsx(banxors.variable, readable.variable, "overflow-hidden lg:overflow-auto")}>
       <body
         className={clsx(
           "font-banxors antialiased",
