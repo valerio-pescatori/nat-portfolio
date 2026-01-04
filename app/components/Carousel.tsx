@@ -126,9 +126,9 @@ export default function Carousel({ images, onClick }: CarouselProps) {
         options={{
           infinite: true,
           syncTouch: true,
-          touchMultiplier: 0.4,
-          lerp: 0.04,
-          syncTouchLerp: 0.04,
+          touchMultiplier: 0.2,
+          lerp: 0.08,
+          syncTouchLerp: 0.08,
           virtualScroll: (data) => {
             data.deltaY *= -1;
             return true;
@@ -162,7 +162,7 @@ export default function Carousel({ images, onClick }: CarouselProps) {
                 }}
                 onClick={() => onClick?.(src)}
               >
-                <Image src={src} alt={`image-${i}`} className="w-full h-full object-cover bg-transparent" />
+                <Image src={src} alt={`image-${i}`} className="w-full grayscale-75 h-full object-cover bg-transparent" />
               </button>
             );
           })}
