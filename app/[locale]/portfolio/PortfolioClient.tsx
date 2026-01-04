@@ -1,20 +1,54 @@
 "use client";
 
 import Image, { StaticImageData } from "next/image";
-import anchor from "../../assets/images/tattoos/anchor.jpg";
-import knife from "../../assets/images/tattoos/knife.jpg";
-import leo from "../../assets/images/tattoos/leo.jpg";
-import octopus from "../../assets/images/tattoos/octopus.jpg";
-import shark from "../../assets/images/tattoos/shark.jpg";
-import statue from "../../assets/images/tattoos/statue.jpg";
-import tempus from "../../assets/images/tattoos/tempus.jpg";
+import tattoo_1 from "../../assets/images/tattoos/tattoo_1.jpg";
+import tattoo_2 from "../../assets/images/tattoos/tattoo_2.jpg";
+import tattoo_3 from "../../assets/images/tattoos/tattoo_3.jpg";
+import tattoo_4 from "../../assets/images/tattoos/tattoo_4.jpg";
+import tattoo_5 from "../../assets/images/tattoos/tattoo_5.jpg";
+import tattoo_6 from "../../assets/images/tattoos/tattoo_6.jpg";
+import tattoo_7 from "../../assets/images/tattoos/tattoo_7.jpg";
+import tattoo_8 from "../../assets/images/tattoos/tattoo_8.jpg";
+import tattoo_9 from "../../assets/images/tattoos/tattoo_9.jpg";
+import tattoo_10 from "../../assets/images/tattoos/tattoo_10.jpg";
+import tattoo_11 from "../../assets/images/tattoos/tattoo_11.jpg";
+import tattoo_12 from "../../assets/images/tattoos/tattoo_12.jpg";
+import tattoo_13 from "../../assets/images/tattoos/tattoo_13.jpg";
+import tattoo_14 from "../../assets/images/tattoos/tattoo_14.jpg";
+import tattoo_15 from "../../assets/images/tattoos/tattoo_15.jpg";
+import tattoo_16 from "../../assets/images/tattoos/tattoo_16.jpg";
+import tattoo_17 from "../../assets/images/tattoos/tattoo_17.jpg";
+import tattoo_18 from "../../assets/images/tattoos/tattoo_18.jpg";
+import tattoo_19 from "../../assets/images/tattoos/tattoo_19.jpg";
+import tattoo_20 from "../../assets/images/tattoos/tattoo_20.jpg";
 import Carousel from "../../components/Carousel";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { CircleX } from "lucide-react";
 import clsx from "clsx";
 import gsap from "gsap";
 
-const IMAGES = [anchor, knife, leo, octopus, shark, statue, tempus];
+const IMAGES = [
+  tattoo_1,
+  tattoo_2,
+  tattoo_3,
+  tattoo_4,
+  tattoo_5,
+  tattoo_6,
+  tattoo_7,
+  tattoo_8,
+  tattoo_9,
+  tattoo_10,
+  tattoo_11,
+  tattoo_12,
+  tattoo_13,
+  tattoo_14,
+  tattoo_15,
+  tattoo_16,
+  tattoo_17,
+  tattoo_18,
+  tattoo_19,
+  tattoo_20,
+];
 
 function getPortfolioAlt(index: number) {
   return `Nat tattoo portfolio image ${index + 1}`;
@@ -125,7 +159,7 @@ export default function PortfolioClient() {
             <Image
               src={image}
               alt={getPortfolioAlt(index)}
-              className="size-full shadow-lg object-cover hover:scale-105 transition-transform duration-300 ease-out"
+              className="h-screen shadow-lg object-cover hover:scale-105 transition-transform duration-300 ease-out"
             />
           </div>
         ))}
@@ -157,7 +191,7 @@ export default function PortfolioClient() {
             <CircleX />
           </button>
           {selectedImage && (
-            <Image src={selectedImage} id="image" className="-translate-y-full opacity-0" alt="Selected tattoo" />
+            <Image src={selectedImage} id="image" className="-translate-y-full opacity-0 h-screen object-contain" alt="Selected tattoo" />
           )}
         </div>
       </div>
