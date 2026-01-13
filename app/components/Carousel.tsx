@@ -118,6 +118,7 @@ export default function Carousel({ images, onClick }: CarouselProps) {
 
   return (
     <>
+    {/* TODO: add caching */}
       <ReactLenis
         root="asChild"
         autoRaf

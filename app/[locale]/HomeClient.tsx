@@ -1,47 +1,57 @@
 "use client";
 
 import { getLocalizedPath, useLocale } from "@/utils/locale";
+import clsx from "clsx";
 import gsap from "gsap";
-import { useEffect, useRef } from "react";
 import Image from "next/image";
+import { useEffect, useRef } from "react";
 import propic from ".././../public/propic.jpg";
 import AnimatedLink from "../components/AnimatedLink";
 import AnimatedText from "../components/AnimatedText";
-import clsx from "clsx";
 
 export default function HomeClient() {
   const { t, locale } = useLocale();
-  const textRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLHeadingElement>(null);
   const mainRef = useRef<HTMLElement>(null);
 
-  const handleMouseMove = (event: MouseEvent) => {
-    // parallax effect with GSAP interpolation
-    const { clientX, clientY } = event;
-    const { left, top, width, height } = document.documentElement.getBoundingClientRect();
-
-    const distanceX = clientX - (left + width / 2);
-    const distanceY = clientY - (top + height / 2);
-    const targetX = 40 + (distanceX / width) * 10; // adjust the multiplier for more/less movement
-    const targetY = 40 + (distanceY / height) * 10;
-
-    // Use GSAP to smoothly interpolate to the target values
-    gsap.to(textRef.current, {
-      attr: {
-        style: `background-position: ${targetX}% ${targetY}%`,
-      },
-      duration: 2,
-      ease: "power4.out",
-    });
-
-    gsap.to(mainRef.current, {
-      background: `radial-gradient(circle at ${clientX}px ${clientY}px, var(--primary), var(--dark-secondary))`,
-      duration: 3,
-      ease: "power1.out",
-    });
-  };
-
   useEffect(() => {
-    window.addEventListener("mousemove", handleMouseMove);
+    const gradientPos = { x: 0, y: 0 };
+    const parallaxPos = { x: 50, y: 50 };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const { clientX, clientY } = e;
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+
+      const parallaxX = 50 - ((clientX - centerX) / centerX) * 10 * -1;
+      const parallaxY = 50 - ((clientY - centerY) / centerY) * 10 * -1;
+
+      gsap.to(gradientPos, {
+        x: clientX,
+        y: clientY,
+        duration: 2,
+        ease: "power4.out",
+        onUpdate: () => {
+          if (mainRef.current) {
+            mainRef.current.style.background = `radial-gradient(circle at ${gradientPos.x}px ${gradientPos.y}px, var(--primary), var(--dark-secondary))`;
+          }
+        },
+      });
+
+      gsap.to(parallaxPos, {
+        x: parallaxX,
+        y: parallaxY,
+        duration: 2,
+        ease: "power4.out",
+        onUpdate: () => {
+          if (textRef.current) {
+            textRef.current.style.backgroundPosition = `${parallaxPos.x}% ${parallaxPos.y}%`;
+          }
+        },
+      });
+    };
+
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
@@ -52,7 +62,9 @@ export default function HomeClient() {
     <main
       ref={mainRef}
       className={clsx("h-screen relative flex flex-col", "md:bg-none")}
-      style={{ background: `radial-gradient(circle at top left, var(--primary), var(--dark-secondary))` }}
+      style={{
+        background: `radial-gradient(circle at 0 0, var(--primary), var(--dark-secondary))`,
+      }}
     >
       <div className="pointer-events-none block md:hidden absolute inset-0 z-10 bg-linear-to-b from-primary/0 via-primary md:via-60% lg:via-80% xl:via-100% via-40% to-secondary" />
       <Image
@@ -68,10 +80,16 @@ export default function HomeClient() {
             className={clsx(
               "text-[15rem] leading-60 md:text-[30rem] md:leading-120",
               "text-inherit md:text-transparent",
-              "bg-none md:bg-[url(/propic.jpg)] bg-clip-text "
+              "bg-none md:bg-[url(/propic.jpg)] bg-clip-text",
+              "before:hidden md:before:block before:content-[attr(data-before)] before:absolute before:inset-0 before:text-base",
+              "before:text-[16rem] before:leading-64 before:md:text-[31rem] before:md:leading-124"
             )}
+            data-before="Nat"
             ref={textRef}
-            style={{ backgroundPosition: "40% 40%", animationFillMode: "backwards" }}
+            style={{
+              backgroundPosition: "50% 50%",
+              animationFillMode: "backwards",
+            }}
           >
             Nat
             <span className="sr-only">Tattoo</span>
