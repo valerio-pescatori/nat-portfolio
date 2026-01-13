@@ -5,6 +5,7 @@
   --foreground: #0d0d0d;
   --primary: #fadadd;
   --secondary: #e2bfdb;
+  --dark-secondary: #9A7D94;
   --detail: #a9a9a9;
 }
 
@@ -13,6 +14,7 @@
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
   --color-secondary: var(--secondary);
+  --color-dark-secondary: var(--dark-secondary);
   --color-detail: var(--detail);
   --font-banxors: var(--font-banxors);
   --font-readable: var(--font-readable);

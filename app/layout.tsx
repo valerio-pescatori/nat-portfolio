@@ -42,7 +42,7 @@ export default async function RootLayout({
         className={clsx(
           "font-banxors antialiased",
           "min-h-screen overflow-hidden",
-          "bg-linear-to-b from-primary to-secondary"
+          "bg-linear-to-br from-primary to-secondary"
         )}
       >
         {children}

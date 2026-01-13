@@ -3,28 +3,22 @@ import type { Locale } from "@/utils/locale";
 import HomeClient from "./HomeClient";
 import { buildAlternates, getPageSeo, getSiteUrl } from "@/utils/seo";
 
-export function generateMetadata({ params }: { params: { locale: Locale } }): Metadata {
-  const seo = getPageSeo(params.locale, "home");
+export async function generateMetadata(params: Promise<{ locale: Locale }>): Promise<Metadata> {
+  const { locale } = await params;
+  const seo = getPageSeo(locale, "home");
 
   return {
     metadataBase: getSiteUrl(),
     title: seo.title,
     description: seo.description,
-    keywords: [
-      "Nat Tatss",
-      "Nat tattoo",
-      "Nat tattoos",
-      "tattoo Roma",
-      "tattoo Rome",
-      "tattoo artist Rome",
-    ],
-    alternates: buildAlternates("/", params.locale),
+    keywords: ["Nat Tatss", "Nat tattoo", "Nat tattoos", "tattoo Roma", "tattoo Rome", "tattoo artist Rome"],
+    alternates: buildAlternates("/", locale),
     openGraph: {
       title: seo.title,
       description: seo.description,
-      url: `/${params.locale}`,
+      url: `/${locale}`,
       siteName: "Nat Tattoo",
-      locale: params.locale,
+      locale: locale,
       type: "website",
     },
   };
