@@ -6,7 +6,6 @@
   --primary: #fadadd;
   --secondary: #e2bfdb;
   --dark-secondary: #9A7D94;
-  --detail: #a9a9a9;
 }
 
 @theme inline {
@@ -15,9 +14,9 @@
   --color-primary: var(--primary);
   --color-secondary: var(--secondary);
   --color-dark-secondary: var(--dark-secondary);
-  --color-detail: var(--detail);
   --font-banxors: var(--font-banxors);
   --font-readable: var(--font-readable);
+  --color-detail: var(--color-gray-300);
 
   --ease-cool-bezier: cubic-bezier(0.16, 1, 0.3, 1);
   --animate-rise: rise 1.75s var(--ease-cool-bezier) forwards;

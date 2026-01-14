@@ -81,10 +81,7 @@ export default function HomeClient() {
             className={clsx(
               "text-[15rem] leading-60 md:text-[30rem] md:leading-120",
               "text-inherit md:text-transparent",
-              "bg-none md:bg-[url(/propic.jpg)] bg-clip-text",
-              "before:content-[attr(data-before)] before:bg-foreground before:bg-clip-text" ,
-              "before:hidden before:pointer-events-none md:before:block before:content-[attr(data-before)] before:absolute before:inset-0 before:bg-foreground before:bg-clip-text",
-              "before:text-[30rem] before:leading-120 before:-z-10 before:text-shadow-[0_0_5px_var(--foreground)]",
+              "bg-none md:bg-[url(/propic.jpg)] bg-clip-text [-webkit-text-stroke:4px_var(--foreground)] ",
             )}
             data-before="Nat"
             ref={textRef}
@@ -99,7 +96,7 @@ export default function HomeClient() {
         </AnimatedText>
         <div className="font-readable flex flex-col gap-2">
           <AnimatedText className="animation-delay-1500">
-            <h2 className="text-2xl">{t("tattoo_artist")}</h2>
+            <h2 className="text-6xl font-banxors">{t("tattoo_artist")}</h2>
           </AnimatedText>
           <AnimatedLink
             href={getLocalizedPath(locale, "/portfolio")}
