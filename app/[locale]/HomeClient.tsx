@@ -16,7 +16,7 @@ export default function HomeClient() {
 
   useEffect(() => {
     const gradientPos = { x: 0, y: 0 };
-    const parallaxPos = { x: 50, y: 50 };
+    const parallaxPos = { x: 40, y: 40 };
 
     const handleMouseMove = (e: MouseEvent) => {
       const { clientX, clientY } = e;
@@ -86,7 +86,7 @@ export default function HomeClient() {
             data-before="Nat"
             ref={textRef}
             style={{
-              backgroundPosition: "50% 50%",
+              backgroundPosition: "40% 40%",
               animationFillMode: "backwards",
             }}
           >
