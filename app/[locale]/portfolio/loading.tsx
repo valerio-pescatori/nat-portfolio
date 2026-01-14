@@ -1,6 +1,6 @@
 export default function Loading() {
   return (
-    <section id="portfolio" className="h-screen">
+    <section id="portfolio" className="h-dvh">
       <h1 className="sr-only">Nat Tattoo Portfolio</h1>
 
       <div className="lg:hidden">

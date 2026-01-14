@@ -159,7 +159,7 @@ export default function PortfolioClient() {
             <Image
               src={image}
               alt={getPortfolioAlt(index)}
-              className="h-screen grayscale-75 shadow-lg object-cover hover:scale-105 transition-transform duration-300 ease-out"
+              className="h-dvh grayscale-75 shadow-lg object-cover hover:scale-105 transition-transform duration-300 ease-out"
             />
           </div>
         ))}
@@ -191,7 +191,7 @@ export default function PortfolioClient() {
             <CircleX />
           </button>
           {selectedImage && (
-            <Image src={selectedImage} id="image" className="-translate-y-full grayscale-75 opacity-0 h-screen object-contain" alt="Selected tattoo" />
+            <Image src={selectedImage} id="image" className="-translate-y-full grayscale-75 opacity-0 h-dvh object-contain" alt="Selected tattoo" />
           )}
         </div>
       </div>

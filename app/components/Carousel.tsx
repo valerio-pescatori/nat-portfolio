@@ -122,7 +122,7 @@ export default function Carousel({ images, onClick }: CarouselProps) {
       <ReactLenis
         root="asChild"
         autoRaf
-        className="text-3xl w-full relative h-screen"
+        className="text-3xl w-full relative h-dvh"
         onTouchStart={() => (lastAnimatedScroll.current = 0)}
         options={{
           infinite: true,

@@ -92,7 +92,7 @@ export default function BookASessionClient() {
   };
 
   return (
-    <div ref={containerRef} className={`font-readable min-h-screen flex items-center justify-center px-4 py-20`}>
+    <div ref={containerRef} className={`font-readable min-h-dvh flex items-center justify-center px-4 py-20`}>
       <div className="w-full max-w-2xl">
         <h1 ref={titleRef} className="text-7xl font-banxors md:text-9xl text-center mb-8">
           {t("book_a_session")}

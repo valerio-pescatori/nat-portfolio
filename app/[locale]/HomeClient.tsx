@@ -62,7 +62,7 @@ export default function HomeClient() {
   return (
     <main
       ref={mainRef}
-      className={clsx("h-screen relative flex flex-col", "md:bg-none")}
+      className={clsx("h-dvh relative flex flex-col", "md:bg-none")}
       style={{
         background: `radial-gradient(circle at 0 0, var(--primary), var(--dark-secondary))`,
       }}
@@ -79,7 +79,7 @@ export default function HomeClient() {
         <AnimatedText className="animate-rise-and-fade">
           <h1
             className={clsx(
-              "text-[15rem] leading-60 md:text-[30rem] md:leading-120",
+              "text-[15rem] leading-64 md:text-[30rem] md:leading-124",
               "text-inherit md:text-transparent",
               "bg-none md:bg-[url(/propic.jpg)] bg-clip-text [-webkit-text-stroke:4px_var(--foreground)] ",
             )}
