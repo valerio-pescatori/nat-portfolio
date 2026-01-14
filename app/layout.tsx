@@ -1,4 +1,5 @@
 import { getSiteUrl } from "@/utils/seo";
+import { Analytics } from "@vercel/analytics/next";
 import clsx from "clsx";
 import "lenis/dist/lenis.css";
 import type { Metadata } from "next";
@@ -35,7 +36,6 @@ export default async function RootLayout({
   const cookieStore = await cookies();
   const cookieLocale = cookieStore.get("NEXT_LOCALE")?.value;
   const lang = cookieLocale === "en" ? "en" : "it";
-
   return (
     <html lang={lang} className={clsx(banxors.variable, readable.variable, "overflow-hidden lg:overflow-auto")}>
       <body
@@ -46,6 +46,7 @@ export default async function RootLayout({
         )}
       >
         {children}
+        <Analytics />
       </body>
     </html>
   );
