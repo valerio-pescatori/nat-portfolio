@@ -22,9 +22,10 @@ export default function HomeClient() {
       const { clientX, clientY } = e;
       const centerX = window.innerWidth / 2;
       const centerY = window.innerHeight / 2;
-
-      const parallaxX = 50 - ((clientX - centerX) / centerX) * 10 * -1;
-      const parallaxY = 50 - ((clientY - centerY) / centerY) * 10 * -1;
+      const distanceX = clientX - centerX;
+      const distanceY = clientY - centerY;
+      const parallaxX = 40 + (distanceX / window.innerWidth) * 10;
+      const parallaxY = 40 + (distanceY / window.innerHeight) * 10;
 
       gsap.to(gradientPos, {
         x: clientX,
@@ -81,8 +82,9 @@ export default function HomeClient() {
               "text-[15rem] leading-60 md:text-[30rem] md:leading-120",
               "text-inherit md:text-transparent",
               "bg-none md:bg-[url(/propic.jpg)] bg-clip-text",
-              "before:hidden md:before:block before:content-[attr(data-before)] before:absolute before:inset-0 before:text-base",
-              "before:text-[16rem] before:leading-64 before:md:text-[31rem] before:md:leading-124"
+              "before:content-[attr(data-before)] before:bg-foreground before:bg-clip-text" ,
+              "before:hidden before:pointer-events-none md:before:block before:content-[attr(data-before)] before:absolute before:inset-0 before:bg-foreground before:bg-clip-text",
+              "before:text-[30rem] before:leading-120 before:-z-10 before:text-shadow-[0_0_5px_var(--foreground)]",
             )}
             data-before="Nat"
             ref={textRef}
@@ -97,7 +99,7 @@ export default function HomeClient() {
         </AnimatedText>
         <div className="font-readable flex flex-col gap-2">
           <AnimatedText className="animation-delay-1500">
-            <h2 className="text-2xl ">{t("tattoo_artist")}</h2>
+            <h2 className="text-2xl">{t("tattoo_artist")}</h2>
           </AnimatedText>
           <AnimatedLink
             href={getLocalizedPath(locale, "/portfolio")}
