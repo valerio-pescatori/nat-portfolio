@@ -24,9 +24,6 @@ export async function generateMetadata(params: Promise<{ locale: Locale }>): Pro
   };
 }
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 export default async function Home() {
-
-  await sleep(3000);
   return <HomeClient />;
 }
