@@ -10,13 +10,7 @@ export function generateMetadata({ params }: { params: { locale: Locale } }): Me
     metadataBase: getSiteUrl(),
     title: seo.title,
     description: seo.description,
-    keywords: [
-      "Nat Tatss",
-      "Nat tattoo",
-      "tattoo portfolio",
-      "tattoo Roma",
-      "tattoo Rome",
-    ],
+    keywords: ["Nat Tatss", "Nat tattoo", "tattoo portfolio", "tattoo Roma", "tattoo Rome"],
     alternates: buildAlternates("/portfolio", params.locale),
     openGraph: {
       title: seo.title,

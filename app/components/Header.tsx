@@ -130,7 +130,12 @@ export default function Header() {
   }, [open, locale]);
 
   return (
-    <nav ref={navRef} className={`fixed w-full top-0 left-0 z-20 p-4 font-readable transition-colors duration-200 ${scrolled ? "bg-primary" : ""}`}>
+    <nav
+      ref={navRef}
+      className={`fixed w-full top-0 left-0 z-20 p-4 font-readable transition-colors duration-200 ${
+        scrolled ? "bg-primary" : ""
+      }`}
+    >
       <div className="flex justify-end items-center gap-4">
         {/* Locale switcher */}
         <div className="flex gap-2">
@@ -139,7 +144,7 @@ export default function Header() {
               setLocaleCookie("it");
               router.push(getLocalizeHref("it"));
             }}
-            className={`px-2 py-1 text-sm rounded transition-opacity ${
+            className={`cursor-pointer px-2 py-1 text-sm rounded transition-opacity ${
               locale === "it" ? "font-semibold" : "opacity-70 hover:opacity-100"
             }`}
           >
@@ -150,7 +155,7 @@ export default function Header() {
               setLocaleCookie("en");
               router.push(getLocalizeHref("en"));
             }}
-            className={`px-2 py-1 text-sm rounded transition-opacity ${
+            className={`cursor-pointer px-2 py-1 text-sm rounded transition-opacity ${
               locale === "en" ? "font-semibold" : "opacity-70 hover:opacity-100"
             }`}
           >
@@ -162,7 +167,7 @@ export default function Header() {
           aria-expanded={open}
           aria-label={open ? "Close menu" : "Open menu"}
           onClick={() => setOpen((v) => !v)}
-          className="p-2 rounded-md"
+          className="p-2 rounded-md cursor-pointer"
         >
           {open ? <X /> : <Menu />}
         </button>
@@ -180,8 +185,8 @@ export default function Header() {
         aria-hidden={!open}
       >
         <div className="p-6 flex items-center justify-between">
-          <h3 className="text-lg font-semibold">Menu</h3>
-          <button aria-label="Close menu" onClick={() => setOpen(false)} className="p-2">
+          <h3 className="font-banxors text-4xl">Menu</h3>
+          <button aria-label="Close menu" onClick={() => setOpen(false)} className="p-2 cursor-pointer">
             <X />
           </button>
         </div>
