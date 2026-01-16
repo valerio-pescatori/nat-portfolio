@@ -15,6 +15,11 @@ export default function HomeClient() {
   const mainRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
+    console.log(
+      "%cDeveloped by Valerio Pescatori - https://valeriopescatori.dev",
+      "background: black; color: white; padding: 4px 8px; border-radius: 4px;"
+    );
+    
     const gradientPos = { x: 0, y: 0 };
     const parallaxPos = { x: 40, y: 40 };
 
@@ -81,7 +86,7 @@ export default function HomeClient() {
             className={clsx(
               "text-[15rem] leading-64 md:text-[30rem] md:leading-124",
               "text-inherit md:text-transparent",
-              "bg-none md:bg-[url(/propic.jpg)] bg-clip-text [-webkit-text-stroke:4px_var(--foreground)] ",
+              "bg-none md:bg-[url(/propic.jpg)] bg-clip-text [-webkit-text-stroke:4px_var(--foreground)] "
             )}
             data-before="Nat"
             ref={textRef}

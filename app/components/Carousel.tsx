@@ -96,7 +96,7 @@ export default function Carousel({ images, onClick }: CarouselProps) {
       // first render
       if (e.direction === 0) {
         updateVisibility();
-        e.scrollTo(-1000, {
+        e.scrollTo(-100, {
           programmatic: true,
           lerp: 0.03,
         });

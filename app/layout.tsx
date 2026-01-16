@@ -36,13 +36,9 @@ export default async function RootLayout({
   const cookieStore = await cookies();
   const cookieLocale = cookieStore.get("NEXT_LOCALE")?.value;
   const lang = cookieLocale === "en" ? "en" : "it";
-  console.log(
-    "%cDeveloped by Valerio Pescatori - https://valeriopescatori.dev",
-    "background: black; color: white; padding: 4px 8px; border-radius: 4px;",
-  );
 
   return (
-    <html lang={lang} className={clsx(banxors.variable, readable.variable, "overflow-hidden lg:overflow-auto")}>
+    <html lang={lang} className={clsx(banxors.variable, readable.variable, "overflow-hidden lg:overflow-auto overscroll-none")}>
       <body
         className={clsx(
           "font-banxors antialiased",
