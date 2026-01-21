@@ -1,9 +1,9 @@
 "use client";
-import { useMounted } from "@/utils/hooks/useMounted";
 import clsx from "clsx";
 import { ReactLenis, useLenis } from "lenis/react";
 import Image, { StaticImageData } from "next/image";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useIsClient, useWindowSize } from "usehooks-ts";
 
 export type CarouselProps = {
   images: StaticImageData[];
@@ -12,17 +12,18 @@ export type CarouselProps = {
 
 export default function Carousel({ images, onClick }: CarouselProps) {
   const [rotation, setRotation] = useState(0);
-  const [windowWidth, setWindowWidth] = useState<number | null>(
-    typeof window !== "undefined" ? window.innerWidth : null
-  );
-  const isMounted = useMounted();
-  const totalElements = images.length;
-
-  const blocks = useRef<(HTMLButtonElement | null)[]>([]);
+  const { width: windowWidth, height: windowHeight } = useWindowSize();
+  const isClient = useIsClient();
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const blocksRef = useRef<(HTMLButtonElement | null)[]>([]);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const visibileBlocks = useRef<Set<number>>(new Set());
   const lastAnimatedScroll = useRef(0);
 
+  const totalElements = images.length;
+
   const radius = useMemo(() => {
-    if (typeof window === "undefined" || windowWidth === null) return 0;
+    if (!isClient) return 0;
     const cardSize = windowWidth * 0.8;
 
     // Dynamic spacing based on viewport width
@@ -35,16 +36,19 @@ export default function Carousel({ images, onClick }: CarouselProps) {
 
     const radius = (cardSize * spacing * totalElements) / (2 * Math.PI);
     return radius;
-  }, [totalElements, windowWidth]);
+  }, [totalElements, windowWidth, isClient]);
 
-  const updateVisibility = useCallback(() => {
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
+  const updateBlocksRotation = useCallback(() => {
+    if (!windowWidth || !windowHeight) return;
+    const viewportWidth = windowWidth;
+    const viewportHeight = windowHeight;
     const centerX = viewportWidth / 2;
     const centerY = viewportHeight / 2;
 
-    blocks.current.forEach((block) => {
+    const transforms = blocksRef.current.map((block, index) => {
       if (!block) return;
+      // only update visible blocks
+      if (!visibileBlocks.current.has(index)) return;
 
       const rect = block.getBoundingClientRect();
       const cardCenterX = rect.left + rect.width / 2;
@@ -63,39 +67,70 @@ export default function Carousel({ images, onClick }: CarouselProps) {
       const rotationX = normalizedDistanceX * 45;
       const rotationY = -normalizedDistanceY * 45;
       const rotationZ = normalizedDistanceY * 15;
-
-      block.style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg) rotateZ(${-rotation + rotationZ}deg)`;
+      return {
+        rotationX,
+        rotationY,
+        rotationZ,
+      };
     });
-  }, [rotation]);
 
-  // Set initial window width and listen for resize using useLayoutEffect
-  useLayoutEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
+    // optimization: read values then batch updates
+    const translateValues = blocksRef.current.map((b) => b?.style.translate);
 
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    transforms.forEach((transform, index) => {
+      const block = blocksRef.current[index];
+      const translateValue = translateValues[index];
+      if (!block || !transform || !translateValue) return;
+
+      const { rotationX, rotationY, rotationZ } = transform;
+
+      block.setAttribute(
+        "style",
+        `
+        translate: ${translateValue};
+        --rotationX: ${rotationX}deg;
+        --rotationY: ${rotationY}deg;
+        --rotationZ: ${-rotation + rotationZ}deg;
+      `,
+      );
+    });
+  }, [rotation, windowWidth, windowHeight]);
+
+  // Initialize IntersectionObserver
+  useEffect(() => {
+    observerRef.current = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const index = blocksRef.current.indexOf(entry.target as HTMLButtonElement);
+        if (entry.isIntersecting) {
+          visibileBlocks.current.add(index);
+          return;
+        }
+        visibileBlocks.current.delete(index);
+      });
+    });
+
+    return () => observerRef.current?.disconnect();
   }, []);
 
   // Calculate visibility based on viewport position
   useEffect(() => {
-    updateVisibility();
+    updateBlocksRotation();
 
     const handleResizeVisibility = () => {
-      updateVisibility();
+      updateBlocksRotation();
     };
 
     // Update on window resize
     window.addEventListener("resize", handleResizeVisibility);
     return () => window.removeEventListener("resize", handleResizeVisibility);
-  }, [updateVisibility]);
+  }, [updateBlocksRotation]);
 
+  // Lenis scroll handler
   useLenis(
     (e) => {
       // first render
       if (e.direction === 0) {
-        updateVisibility();
+        updateBlocksRotation();
         e.scrollTo(-100, {
           programmatic: true,
           lerp: 0.03,
@@ -109,16 +144,56 @@ export default function Carousel({ images, onClick }: CarouselProps) {
       // update rotation
       const delta = e.animatedScroll - lastAnimatedScroll.current;
       lastAnimatedScroll.current = e.animatedScroll;
+
       setRotation((r) => (r + delta * 0.25) % 360);
     },
-    [blocks]
+    [blocksRef],
   );
 
-  if (!isMounted) return null;
+  const memoizedBlocks = useMemo(
+    () =>
+      images.map((src, i) => {
+        const angle = (360 / totalElements) * i;
+        const radian = (angle * Math.PI) / 180;
+        const x = Math.cos(radian) * radius;
+        const y = Math.sin(radian) * radius;
+
+        return (
+          <button
+            className={clsx(
+              "bg-white aspect-square shadow-2xl border overflow-hidden flex items-center justify-center will-change-[transform,translate]",
+              "absolute top-1/2 left-1/2",
+              "rotate-x-(--rotationX) rotate-y-(--rotationY) rotate-z-(--rotationZ)",
+              `w-[min(80%,550px)] contain-content`,
+            )}
+            style={{
+              translate: `calc(-50% - ${x}px) calc(-50% - ${y}px)`,
+            }}
+            key={i}
+            ref={(element) => {
+              if (!element) return;
+              blocksRef.current[i] = element;
+              observerRef.current?.observe(element);
+            }}
+            onClick={() => onClick?.(src)}
+          >
+            <Image
+              src={src}
+              alt={`image-${i}`}
+              className="w-full grayscale-75 h-full object-cover bg-transparent"
+              placeholder="blur"
+              priority={i < 3}
+            />
+          </button>
+        );
+      }),
+    [images, totalElements, radius, onClick],
+  );
+
+  if (!isClient) return null;
 
   return (
     <>
-    {/* TODO: add caching */}
       <ReactLenis
         root="asChild"
         autoRaf
@@ -138,35 +213,14 @@ export default function Carousel({ images, onClick }: CarouselProps) {
       >
         <div
           id="wrapper"
-          className="absolute inset-0 top-1/2"
-          style={{ rotate: `${rotation}deg`, translate: `-${radius}px -50%` }}
+          ref={wrapperRef}
+          className="absolute inset-0 top-1/2 will-change-[rotate,translate]"
+          style={{
+            rotate: `${rotation}deg`,
+            translate: `-${radius}px -50%`,
+          }}
         >
-          {images.map((src, i) => {
-            const angle = (360 / totalElements) * i;
-            const radian = (angle * Math.PI) / 180;
-            const x = Math.cos(radian) * radius;
-            const y = Math.sin(radian) * radius;
-
-            return (
-              <button
-                className={clsx(
-                  "bg-white aspect-square shadow-2xl border overflow-hidden flex items-center justify-center",
-                  "absolute top-1/2 left-1/2"
-                )}
-                style={{
-                  translate: `calc(-50% - ${x}px) calc(-50% - ${y}px)`,
-                  width: "min(80%, 550px)",
-                }}
-                key={i}
-                ref={(element) => {
-                  blocks.current[i] = element;
-                }}
-                onClick={() => onClick?.(src)}
-              >
-                <Image src={src} alt={`image-${i}`} className="w-full grayscale-75 h-full object-cover bg-transparent" />
-              </button>
-            );
-          })}
+          {memoizedBlocks}
         </div>
       </ReactLenis>
     </>
