@@ -3,7 +3,7 @@ import { useMounted } from "@/utils/hooks/useMounted";
 import clsx from "clsx";
 import { ReactLenis, useLenis } from "lenis/react";
 import Image, { StaticImageData } from "next/image";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 
 export type CarouselProps = {
   images: StaticImageData[];
@@ -13,13 +13,36 @@ export type CarouselProps = {
 export default function Carousel({ images, onClick }: CarouselProps) {
   const [rotation, setRotation] = useState(0);
   const [windowWidth, setWindowWidth] = useState<number | null>(
-    typeof window !== "undefined" ? window.innerWidth : null
+    typeof window !== "undefined" ? window.innerWidth : null,
   );
   const isMounted = useMounted();
   const totalElements = images.length;
 
   const blocks = useRef<(HTMLButtonElement | null)[]>([]);
   const lastAnimatedScroll = useRef(0);
+
+  // Calculate which cards are visible based on rotation
+  const visibleIndices = useMemo(() => {
+    const indices = new Set<number>();
+
+    // Check each card to see if it's in the visible viewport range
+
+    for (let i = 0; i < totalElements; i++) {
+      const cardAngle = (360 / totalElements) * i;
+      // Calculate the card's screen position
+      const screenAngle = (((cardAngle - Math.abs(rotation)) % 360) + 360) % 360;
+
+      // Cards are visible when screenAngle is around 180° (left side of circle = right side of viewport)
+      // Based on measurements: card 0: 150-210, card 1: 188-243, card 2: 223-280
+      const isVisible = screenAngle <= 45 || screenAngle >= 315;
+
+      if (isVisible) {
+        indices.add(i);
+      }
+    }
+    // console.log(indices.size);
+    return indices;
+  }, [rotation, totalElements]);
 
   const radius = useMemo(() => {
     if (typeof window === "undefined" || windowWidth === null) return 0;
@@ -37,37 +60,6 @@ export default function Carousel({ images, onClick }: CarouselProps) {
     return radius;
   }, [totalElements, windowWidth]);
 
-  const updateVisibility = useCallback(() => {
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    const centerX = viewportWidth / 2;
-    const centerY = viewportHeight / 2;
-
-    blocks.current.forEach((block) => {
-      if (!block) return;
-
-      const rect = block.getBoundingClientRect();
-      const cardCenterX = rect.left + rect.width / 2;
-      const cardCenterY = rect.top + rect.height / 2;
-
-      // Calculate distance from viewport center
-      const distanceX = cardCenterX - centerX;
-      const distanceY = cardCenterY - centerY;
-
-      // Maximum distance for fade calculation (adjust for desired effect range)
-      const maxDistance = viewportWidth * 1.6;
-
-      const normalizedDistanceX = Math.min(distanceX / maxDistance, 1);
-      const normalizedDistanceY = Math.min(distanceY / maxDistance, 1);
-      // Transform the normalizedDistance into positive X and negative Y rotation
-      const rotationX = normalizedDistanceX * 45;
-      const rotationY = -normalizedDistanceY * 45;
-      const rotationZ = normalizedDistanceY * 15;
-
-      block.style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg) rotateZ(${-rotation + rotationZ}deg)`;
-    });
-  }, [rotation]);
-
   // Set initial window width and listen for resize using useLayoutEffect
   useLayoutEffect(() => {
     const handleResize = () => {
@@ -78,28 +70,14 @@ export default function Carousel({ images, onClick }: CarouselProps) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Calculate visibility based on viewport position
-  useEffect(() => {
-    updateVisibility();
-
-    const handleResizeVisibility = () => {
-      updateVisibility();
-    };
-
-    // Update on window resize
-    window.addEventListener("resize", handleResizeVisibility);
-    return () => window.removeEventListener("resize", handleResizeVisibility);
-  }, [updateVisibility]);
-
   useLenis(
     (e) => {
       // first render
       if (e.direction === 0) {
-        updateVisibility();
-        e.scrollTo(-1000, {
-          programmatic: true,
-          lerp: 0.03,
-        });
+        // e.scrollTo(-1000, {
+        //   programmatic: true,
+        //   lerp: 0.03,
+        // });
       }
       // on animation stop
       if (!e.isScrolling) {
@@ -111,18 +89,17 @@ export default function Carousel({ images, onClick }: CarouselProps) {
       lastAnimatedScroll.current = e.animatedScroll;
       setRotation((r) => (r + delta * 0.25) % 360);
     },
-    [blocks]
+    [blocks],
   );
 
   if (!isMounted) return null;
 
   return (
     <>
-    {/* TODO: add caching */}
       <ReactLenis
         root="asChild"
         autoRaf
-        className="text-3xl w-full relative h-screen"
+        className="text-3xl w-full relative h-screen perspective-distant perspective-origin-center"
         onTouchStart={() => (lastAnimatedScroll.current = 0)}
         options={{
           infinite: true,
@@ -138,10 +115,18 @@ export default function Carousel({ images, onClick }: CarouselProps) {
       >
         <div
           id="wrapper"
-          className="absolute inset-0 top-1/2"
-          style={{ rotate: `${rotation}deg`, translate: `-${radius}px -50%` }}
+          className="absolute inset-0 top-1/2 transform-3d"
+          style={{
+            rotate: `${180 + rotation}deg`,
+            translate: `-${radius}px -50%`,
+          }}
         >
           {images.map((src, i) => {
+            // Skip rendering cards that aren't visible
+            if (!visibleIndices.has(i)) {
+              return null;
+            }
+
             const angle = (360 / totalElements) * i;
             const radian = (angle * Math.PI) / 180;
             const x = Math.cos(radian) * radius;
@@ -151,10 +136,13 @@ export default function Carousel({ images, onClick }: CarouselProps) {
               <button
                 className={clsx(
                   "bg-white aspect-square shadow-2xl border overflow-hidden flex items-center justify-center",
-                  "absolute top-1/2 left-1/2"
+                  "absolute top-1/2 left-1/2 will-change-transform",
+                  "backface-hidden",
                 )}
                 style={{
+                  rotate: `${angle + 180}deg`,
                   translate: `calc(-50% - ${x}px) calc(-50% - ${y}px)`,
+                  contain: "layout style paint",
                   width: "min(80%, 550px)",
                 }}
                 key={i}
@@ -163,7 +151,11 @@ export default function Carousel({ images, onClick }: CarouselProps) {
                 }}
                 onClick={() => onClick?.(src)}
               >
-                <Image src={src} alt={`image-${i}`} className="w-full grayscale-75 h-full object-cover bg-transparent" />
+                <Image
+                  src={src}
+                  alt={`image-${i}`}
+                  className="w-full grayscale-75 h-full object-cover bg-transparent"
+                />
               </button>
             );
           })}
