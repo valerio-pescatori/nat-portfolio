@@ -24,6 +24,6 @@ export async function generateMetadata(params: Promise<{ locale: Locale }>): Pro
   };
 }
 
-export default function Home() {
+export default async function Home() {
   return <HomeClient />;
 }

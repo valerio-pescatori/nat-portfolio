@@ -145,7 +145,7 @@ export default function PortfolioClient() {
           }}
         />
       </div>
-      <div className="hidden lg:grid grid-cols-2 gap-4 py-6 px-4 mt-12">
+      <div className="hidden lg:grid grid-cols-2 gap-4 py-6 container mx-auto mt-12">
         {IMAGES.map((image, index) => (
           <div
             key={index}

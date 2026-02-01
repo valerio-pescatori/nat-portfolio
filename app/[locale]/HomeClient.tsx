@@ -16,15 +16,16 @@ export default function HomeClient() {
 
   useEffect(() => {
     const gradientPos = { x: 0, y: 0 };
-    const parallaxPos = { x: 50, y: 50 };
+    const parallaxPos = { x: 40, y: 40 };
 
     const handleMouseMove = (e: MouseEvent) => {
       const { clientX, clientY } = e;
       const centerX = window.innerWidth / 2;
       const centerY = window.innerHeight / 2;
-
-      const parallaxX = 50 - ((clientX - centerX) / centerX) * 10 * -1;
-      const parallaxY = 50 - ((clientY - centerY) / centerY) * 10 * -1;
+      const distanceX = clientX - centerX;
+      const distanceY = clientY - centerY;
+      const parallaxX = 40 + (distanceX / window.innerWidth) * 10;
+      const parallaxY = 40 + (distanceY / window.innerHeight) * 10;
 
       gsap.to(gradientPos, {
         x: clientX,
@@ -80,14 +81,12 @@ export default function HomeClient() {
             className={clsx(
               "text-[15rem] leading-60 md:text-[30rem] md:leading-120",
               "text-inherit md:text-transparent",
-              "bg-none md:bg-[url(/propic.jpg)] bg-clip-text",
-              "before:hidden md:before:block before:content-[attr(data-before)] before:absolute before:inset-0 before:text-base",
-              "before:text-[16rem] before:leading-64 before:md:text-[31rem] before:md:leading-124"
+              "bg-none md:bg-[url(/propic.jpg)] bg-clip-text [-webkit-text-stroke:4px_var(--foreground)] ",
             )}
             data-before="Nat"
             ref={textRef}
             style={{
-              backgroundPosition: "50% 50%",
+              backgroundPosition: "40% 40%",
               animationFillMode: "backwards",
             }}
           >
@@ -97,7 +96,7 @@ export default function HomeClient() {
         </AnimatedText>
         <div className="font-readable flex flex-col gap-2">
           <AnimatedText className="animation-delay-1500">
-            <h2 className="text-2xl ">{t("tattoo_artist")}</h2>
+            <h2 className="text-6xl font-banxors">{t("tattoo_artist")}</h2>
           </AnimatedText>
           <AnimatedLink
             href={getLocalizedPath(locale, "/portfolio")}
