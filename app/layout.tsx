@@ -1,4 +1,5 @@
 import { getSiteUrl } from "@/utils/seo";
+import { Analytics } from "@vercel/analytics/next";
 import clsx from "clsx";
 import "lenis/dist/lenis.css";
 import type { Metadata } from "next";
@@ -37,15 +38,16 @@ export default async function RootLayout({
   const lang = cookieLocale === "en" ? "en" : "it";
 
   return (
-    <html lang={lang} className={clsx(banxors.variable, readable.variable, "overflow-hidden lg:overflow-auto")}>
+    <html lang={lang} className={clsx(banxors.variable, readable.variable, "overflow-hidden lg:overflow-auto overscroll-none")}>
       <body
         className={clsx(
           "font-banxors antialiased",
-          "min-h-screen overflow-hidden",
+          "min-h-dvh overflow-hidden",
           "bg-radial-[circle_at_0_0] from-primary to-dark-secondary"
         )}
       >
         {children}
+        <Analytics />
       </body>
     </html>
   );
