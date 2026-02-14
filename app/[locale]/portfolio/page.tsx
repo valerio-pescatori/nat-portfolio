@@ -3,21 +3,22 @@ import type { Locale } from "@/utils/locale";
 import PortfolioClient from "./PortfolioClient";
 import { buildAlternates, getPageSeo, getSiteUrl } from "@/utils/seo";
 
-export function generateMetadata({ params }: { params: { locale: Locale } }): Metadata {
-  const seo = getPageSeo(params.locale, "portfolio");
+export async function generateMetadata(params: Promise<{ locale: Locale }>): Promise<Metadata> {
+  const { locale } = await params;
+  const seo = getPageSeo(locale, "portfolio");
 
   return {
     metadataBase: getSiteUrl(),
     title: seo.title,
     description: seo.description,
     keywords: ["Nat Tatss", "Nat tattoo", "tattoo portfolio", "tattoo Roma", "tattoo Rome"],
-    alternates: buildAlternates("/portfolio", params.locale),
+    alternates: buildAlternates("/portfolio", locale),
     openGraph: {
       title: seo.title,
       description: seo.description,
-      url: `/${params.locale}/portfolio`,
+      url: `/${locale}/portfolio`,
       siteName: "Nat Tattoo",
-      locale: params.locale,
+      locale: locale,
       type: "website",
     },
   };

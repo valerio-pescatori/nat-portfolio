@@ -3,8 +3,9 @@ import type { Locale } from "@/utils/locale";
 import BookASessionClient from "./BookASessionClient";
 import { buildAlternates, getPageSeo, getSiteUrl } from "@/utils/seo";
 
-export function generateMetadata({ params }: { params: { locale: Locale } }): Metadata {
-  const seo = getPageSeo(params.locale, "book");
+export async function generateMetadata(params: Promise<{ locale: Locale }>): Promise<Metadata> {
+  const { locale } = await params;
+  const seo = getPageSeo(locale, "book");
 
   return {
     metadataBase: getSiteUrl(),
@@ -17,13 +18,13 @@ export function generateMetadata({ params }: { params: { locale: Locale } }): Me
       "tattoo Roma",
       "tattoo Rome",
     ],
-    alternates: buildAlternates("/book-a-session", params.locale),
+    alternates: buildAlternates("/book-a-session", locale),
     openGraph: {
       title: seo.title,
       description: seo.description,
-      url: `/${params.locale}/book-a-session`,
+      url: `/${locale}/book-a-session`,
       siteName: "Nat Tattoo",
-      locale: params.locale,
+      locale: locale,
       type: "website",
     },
   };
