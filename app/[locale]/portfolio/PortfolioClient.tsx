@@ -1,54 +1,12 @@
 "use client";
 
 import Image, { StaticImageData } from "next/image";
-import tattoo_1 from "../../assets/images/tattoos/tattoo_1.jpg";
-import tattoo_2 from "../../assets/images/tattoos/tattoo_2.jpg";
-import tattoo_3 from "../../assets/images/tattoos/tattoo_3.jpg";
-import tattoo_4 from "../../assets/images/tattoos/tattoo_4.jpg";
-import tattoo_5 from "../../assets/images/tattoos/tattoo_5.jpg";
-import tattoo_6 from "../../assets/images/tattoos/tattoo_6.jpg";
-import tattoo_7 from "../../assets/images/tattoos/tattoo_7.jpg";
-import tattoo_8 from "../../assets/images/tattoos/tattoo_8.jpg";
-import tattoo_9 from "../../assets/images/tattoos/tattoo_9.jpg";
-import tattoo_10 from "../../assets/images/tattoos/tattoo_10.jpg";
-import tattoo_11 from "../../assets/images/tattoos/tattoo_11.jpg";
-import tattoo_12 from "../../assets/images/tattoos/tattoo_12.jpg";
-import tattoo_13 from "../../assets/images/tattoos/tattoo_13.jpg";
-import tattoo_14 from "../../assets/images/tattoos/tattoo_14.jpg";
-import tattoo_15 from "../../assets/images/tattoos/tattoo_15.jpg";
-import tattoo_16 from "../../assets/images/tattoos/tattoo_16.jpg";
-import tattoo_17 from "../../assets/images/tattoos/tattoo_17.jpg";
-import tattoo_18 from "../../assets/images/tattoos/tattoo_18.jpg";
-import tattoo_19 from "../../assets/images/tattoos/tattoo_19.jpg";
-import tattoo_20 from "../../assets/images/tattoos/tattoo_20.jpg";
+import { TATTOO_IMAGES } from "../../assets/images/tattoos";
 import Carousel from "../../components/Carousel";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { CircleX } from "lucide-react";
 import clsx from "clsx";
 import gsap from "gsap";
-
-const IMAGES = [
-  tattoo_1,
-  tattoo_2,
-  tattoo_3,
-  tattoo_4,
-  tattoo_5,
-  tattoo_6,
-  tattoo_7,
-  tattoo_8,
-  tattoo_9,
-  tattoo_10,
-  tattoo_11,
-  tattoo_12,
-  tattoo_13,
-  tattoo_14,
-  tattoo_15,
-  tattoo_16,
-  tattoo_17,
-  tattoo_18,
-  tattoo_19,
-  tattoo_20,
-];
 
 function getPortfolioAlt(index: number) {
   return `Nat tattoo portfolio image ${index + 1}`;
@@ -69,7 +27,7 @@ export default function PortfolioClient() {
   );
 
   useLayoutEffect(() => {
-    const tl = gsap.timeline({ delay: 0, defaults: { duration: 0.8 } });
+    const tl = gsap.timeline({ delay: 0, defaults: { duration: 0.4 } });
     if (isOpenState === null) return;
 
     if (isOpenState === "open") {
@@ -81,15 +39,15 @@ export default function PortfolioClient() {
           pathRef.current,
           {
             attr: { d: pathData.open },
-            duration: 0.4,
+            duration: 0.2,
             ease: "power2.out",
           },
-          "-=0.1"
+          "-=0.05"
         )
         .to(
           "#image",
           {
-            duration: 0.4,
+            duration: 0.2,
             translateY: 0,
             opacity: 1,
             ease: "power2.out",
@@ -97,11 +55,11 @@ export default function PortfolioClient() {
               setIsOpenState("openComplete");
             },
           },
-          "-=0.2"
+          "-=0.1"
         );
     } else if (isOpenState === "closed") {
       tl.to("#image", {
-        duration: 0.4,
+        duration: 0.2,
         translateY: "-100%",
         opacity: 0,
         ease: "power2.in",
@@ -112,7 +70,7 @@ export default function PortfolioClient() {
             attr: { d: pathData.mid },
             ease: "power2.in",
           },
-          "-=0.4"
+          "-=0.2"
         )
         .to(
           pathRef.current,
@@ -124,7 +82,7 @@ export default function PortfolioClient() {
               setIsOpenState("closedComplete");
             },
           },
-          "-=0.1"
+          "-=0.05"
         );
     }
     return () => {
@@ -138,7 +96,7 @@ export default function PortfolioClient() {
 
       <div className="lg:hidden">
         <Carousel
-          images={IMAGES}
+          images={TATTOO_IMAGES}
           onClick={(image) => {
             setSelectedImage(image);
             setIsOpenState("open");
@@ -146,7 +104,7 @@ export default function PortfolioClient() {
         />
       </div>
       <div className="hidden lg:grid grid-cols-2 gap-4 py-6 container mx-auto mt-12">
-        {IMAGES.map((image, index) => (
+        {TATTOO_IMAGES.map((image, index) => (
           <div
             key={index}
             className="cursor-pointer overflow-hidden rounded-lg animate-rise-and-fade"
