@@ -12,6 +12,7 @@ export type CarouselProps = {
 
 export default function Carousel({ images, onClick }: CarouselProps) {
   const [rotation, setRotation] = useState(0);
+  const [scrollDirection, setScrollDirection] = useState<1 | -1>(1); // -1 for down, 1 for up (inverted)
   const [windowWidth, setWindowWidth] = useState<number | null>(
     typeof window !== "undefined" ? window.innerWidth : null,
   );
@@ -29,20 +30,17 @@ export default function Carousel({ images, onClick }: CarouselProps) {
 
     for (let i = 0; i < totalElements; i++) {
       const cardAngle = (360 / totalElements) * i;
-      // Calculate the card's screen position
-      const screenAngle = (((cardAngle - Math.abs(rotation)) % 360) + 360) % 360;
+      const screenAngle = scrollDirection === -1 ? cardAngle - Math.abs(rotation) : cardAngle + Math.abs(rotation);
+      const screenAngleModulo = ((screenAngle % 360) + 360) % 360;
 
-      // Cards are visible when screenAngle is around 180° (left side of circle = right side of viewport)
-      // Based on measurements: card 0: 150-210, card 1: 188-243, card 2: 223-280
-      const isVisible = screenAngle <= 45 || screenAngle >= 315;
+      const isVisible = screenAngleModulo <= 45 || screenAngleModulo >= 315;
 
       if (isVisible) {
         indices.add(i);
       }
     }
-    // console.log(indices.size);
     return indices;
-  }, [rotation, totalElements]);
+  }, [rotation, totalElements, scrollDirection]);
 
   const radius = useMemo(() => {
     if (typeof window === "undefined" || windowWidth === null) return 0;
@@ -87,6 +85,9 @@ export default function Carousel({ images, onClick }: CarouselProps) {
       // update rotation
       const delta = e.animatedScroll - lastAnimatedScroll.current;
       lastAnimatedScroll.current = e.animatedScroll;
+      if (e.direction !== 0) {
+        setScrollDirection(e.direction);
+      }
       setRotation((r) => (r + delta * 0.25) % 360);
     },
     [blocks],
