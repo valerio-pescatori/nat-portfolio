@@ -6,13 +6,12 @@ import Image, { StaticImageData } from "next/image";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 
 export type CarouselProps = {
-  images: StaticImageData[];
+  images: readonly StaticImageData[];
   onClick?: (image: StaticImageData) => void;
 };
 
 export default function Carousel({ images, onClick }: CarouselProps) {
   const [rotation, setRotation] = useState(0);
-  const [scrollDirection, setScrollDirection] = useState<1 | -1>(1); // -1 for down, 1 for up (inverted)
   const [windowWidth, setWindowWidth] = useState<number | null>(
     typeof window !== "undefined" ? window.innerWidth : null,
   );
@@ -21,26 +20,6 @@ export default function Carousel({ images, onClick }: CarouselProps) {
 
   const blocks = useRef<(HTMLButtonElement | null)[]>([]);
   const lastAnimatedScroll = useRef(0);
-
-  // Calculate which cards are visible based on rotation
-  const visibleIndices = useMemo(() => {
-    const indices = new Set<number>();
-
-    // Check each card to see if it's in the visible viewport range
-
-    for (let i = 0; i < totalElements; i++) {
-      const cardAngle = (360 / totalElements) * i;
-      const screenAngle = scrollDirection === -1 ? cardAngle - Math.abs(rotation) : cardAngle + Math.abs(rotation);
-      const screenAngleModulo = ((screenAngle % 360) + 360) % 360;
-
-      const isVisible = screenAngleModulo <= 45 || screenAngleModulo >= 315;
-
-      if (isVisible) {
-        indices.add(i);
-      }
-    }
-    return indices;
-  }, [rotation, totalElements, scrollDirection]);
 
   const radius = useMemo(() => {
     if (typeof window === "undefined" || windowWidth === null) return 0;
@@ -57,6 +36,33 @@ export default function Carousel({ images, onClick }: CarouselProps) {
     const radius = (cardSize * spacing * totalElements) / (2 * Math.PI);
     return radius;
   }, [totalElements, windowWidth]);
+
+  // Calculate which cards are visible based on rotation.
+  // The wrapper (circle) center sits at x = viewportWidth/2 - radius.
+  // After the wrapper rotates by (180 + rotation)°, each card's screen-x is:
+  //   circleCenterX + radius * cos(cardAngle + rotation)
+  // A card is visible when any part of it overlaps the viewport [0, viewportWidth].
+  const visibleIndices = useMemo(() => {
+    const indices = new Set<number>();
+    if (windowWidth === null || radius === 0) return indices;
+
+    const circleCenterX = windowWidth / 2 - radius;
+    const cardWidth = Math.min(windowWidth * 0.8, 550);
+
+    for (let i = 0; i < totalElements; i++) {
+      const cardAngle = (360 / totalElements) * i;
+      const effectiveRad = ((cardAngle + rotation) * Math.PI) / 180;
+      const cardX = circleCenterX + radius * Math.cos(effectiveRad);
+
+      // Card is visible if any part overlaps the viewport
+      const isVisible = cardX + cardWidth / 2 > 0 && cardX - cardWidth / 2 < windowWidth;
+
+      if (isVisible) {
+        indices.add(i);
+      }
+    }
+    return indices;
+  }, [rotation, totalElements, windowWidth, radius]);
 
   // Set initial window width and listen for resize using useLayoutEffect
   useLayoutEffect(() => {
@@ -85,9 +91,6 @@ export default function Carousel({ images, onClick }: CarouselProps) {
       // update rotation
       const delta = e.animatedScroll - lastAnimatedScroll.current;
       lastAnimatedScroll.current = e.animatedScroll;
-      if (e.direction !== 0) {
-        setScrollDirection(e.direction);
-      }
       setRotation((r) => (r + delta * 0.25) % 360);
     },
     [blocks],
@@ -105,9 +108,9 @@ export default function Carousel({ images, onClick }: CarouselProps) {
         options={{
           infinite: true,
           syncTouch: true,
-          touchMultiplier: 0.2,
-          lerp: 0.08,
-          syncTouchLerp: 0.08,
+          touchMultiplier: 0.175,
+          lerp: 0.05,
+          syncTouchLerp: 0.05,
           virtualScroll: (data) => {
             data.deltaY *= -1;
             return true;
